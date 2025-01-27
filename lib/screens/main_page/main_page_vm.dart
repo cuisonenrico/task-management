@@ -1,8 +1,8 @@
 import 'package:async_redux/async_redux.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:setup/screens/main_page/main_page_connector.dart';
-import 'package:setup/state/actions/actions.dart';
-import 'package:setup/state/app_state.dart';
+import 'package:task_management/screens/main_page/main_page_connector.dart';
+import 'package:task_management/state/actions/actions.dart';
+import 'package:task_management/state/app_state.dart';
 
 class MainPageVmFactory extends VmFactory<AppState, MainPageConnector, MainPageVm> {
   @override
