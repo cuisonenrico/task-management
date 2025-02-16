@@ -18,7 +18,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return Environment().IOS_ENV;
       case TargetPlatform.macOS:
-        return Environment().MACOS_ENV;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macOS - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '

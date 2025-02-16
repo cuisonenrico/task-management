@@ -1,47 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:task_management/screens/widgets/custom_expansion_tile.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({
-    required this.onTap,
-    required this.counter,
     super.key,
   });
 
-  final int counter;
-  final ValueChanged<int> onTap;
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: const Text('Setup App'),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text(
-                  'You have pushed the button this many times:',
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomExpansionTile(
+                expandedChildren: [
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    spacing: 8.0,
+                    children: [
+                      Icon(
+                        Icons.disabled_by_default_outlined,
+                        size: 35,
+                      ),
+                      Icon(
+                        Icons.disabled_by_default_outlined,
+                        size: 35,
+                      ),
+                      Icon(
+                        Icons.disabled_by_default_outlined,
+                        size: 35,
+                      ),
+                      Icon(
+                        Icons.disabled_by_default_outlined,
+                        size: 35,
+                      ),
+                      Icon(
+                        Icons.disabled_by_default_outlined,
+                        size: 35,
+                      ),
+                    ],
+                  ),
+                ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(
+                      Icons.safety_check,
+                      size: 35,
+                    ),
+                    Text(
+                      'Data',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    Icon(
+                      Icons.safety_divider,
+                      size: 35,
+                    ),
+                  ],
                 ),
-                Text(
-                  '$counter',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ],
+              ),
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => onTap(1),
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
-        ));
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: const <Widget>[
+                  Center(
+                    child: Text('TODO Tasks'),
+                  ),
+                  Center(
+                    child: Text('Calendar View'),
+                  ),
+                  Center(
+                    child: Text('Profile'),
+                  ),
+                ],
+              ),
+            ),
+            TabBar(
+              controller: _tabController,
+              tabs: const <Widget>[
+                Tab(icon: Icon(Icons.check_box)),
+                Tab(icon: Icon(Icons.calendar_month_rounded)),
+                Tab(icon: Icon(Icons.person)),
+              ],
+              labelColor: Colors.blue,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Colors.blue,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

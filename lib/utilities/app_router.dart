@@ -1,6 +1,9 @@
+import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:task_management/screens/login_page/login_page_connector.dart';
 import 'package:task_management/screens/main_page/main_page_connector.dart';
+import 'package:task_management/state/app_state.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'rootNavigatorKey');
 
@@ -8,6 +11,18 @@ final router = GoRouter(
   observers: [routeObservers],
   initialLocation: MainPageConnector.route,
   navigatorKey: rootNavigatorKey,
+  redirect: (context, routeState) {
+    final state = StoreProvider.state<AppState>(context);
+    final isLoggedIn = state.userState.isLoggedIn == true; // [==false] to Force logged in status in state
+
+    if (routeState.uri.toString().contains('sign-up-page')) return null;
+
+    if (!isLoggedIn) return LoginPageConnector.route;
+
+    if (routeState.uri.toString() == MainPageConnector.route) return null;
+
+    return routeState.uri.toString();
+  },
   routes: [
     GoRoute(
       path: MainPageConnector.route,
@@ -17,6 +32,17 @@ final router = GoRouter(
         context: context,
         state: state,
         child: const MainPageConnector(),
+      ),
+      routes: const [],
+    ),
+    GoRoute(
+      path: LoginPageConnector.route,
+      name: LoginPageConnector.routeName,
+      builder: (_, state) => const LoginPageConnector(),
+      pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+        context: context,
+        state: state,
+        child: const LoginPageConnector(),
       ),
       routes: const [],
     ),

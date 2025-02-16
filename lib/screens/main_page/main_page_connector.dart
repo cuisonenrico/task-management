@@ -14,10 +14,7 @@ class MainPageConnector extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, MainPageVm>(
       vm: () => MainPageVmFactory(),
-      builder: (_, vm) => MainPage(
-        onTap: vm.onTap,
-        counter: vm.counter,
-      ),
+      builder: (_, vm) => MainPage(),
     );
   }
 }
