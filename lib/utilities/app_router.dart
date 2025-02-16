@@ -1,52 +1,35 @@
-import 'package:async_redux/async_redux.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:task_management/screens/login_page/login_page_connector.dart';
-import 'package:task_management/screens/main_page/main_page_connector.dart';
-import 'package:task_management/state/app_state.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:task_management/screens/main_page/main_page.dart';
+import 'package:task_management/state/user_state/user_provider/user_provider.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'rootNavigatorKey');
 
-final router = GoRouter(
-  observers: [routeObservers],
-  initialLocation: MainPageConnector.route,
-  navigatorKey: rootNavigatorKey,
-  redirect: (context, routeState) {
-    final state = StoreProvider.state<AppState>(context);
-    final isLoggedIn = state.userState.isLoggedIn == true; // [==false] to Force logged in status in state
+final routerProvider = Provider<GoRouter>(
+  (ref) => GoRouter(
+    observers: [routeObservers],
+    initialLocation: MainPage.route,
+    navigatorKey: rootNavigatorKey,
+    routes: [
+      GoRoute(
+        path: MainPage.route,
+        name: MainPage.routeName,
+        builder: (_, state) => const MainPage(),
+        pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
+          context: context,
+          state: state,
+          child: const MainPage(),
+        ),
+        redirect: (_, __) {
+          ref.read(userProvider.notifier).getUser('YHSczIKk2tQj4pzCNgm1rvvDGu52');
 
-    if (routeState.uri.toString().contains('sign-up-page')) return null;
-
-    if (!isLoggedIn) return LoginPageConnector.route;
-
-    if (routeState.uri.toString() == MainPageConnector.route) return null;
-
-    return routeState.uri.toString();
-  },
-  routes: [
-    GoRoute(
-      path: MainPageConnector.route,
-      name: MainPageConnector.routeName,
-      builder: (_, state) => const MainPageConnector(),
-      pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-        context: context,
-        state: state,
-        child: const MainPageConnector(),
+          return null;
+        },
+        routes: const [],
       ),
-      routes: const [],
-    ),
-    GoRoute(
-      path: LoginPageConnector.route,
-      name: LoginPageConnector.routeName,
-      builder: (_, state) => const LoginPageConnector(),
-      pageBuilder: (context, state) => buildPageWithDefaultTransition<void>(
-        context: context,
-        state: state,
-        child: const LoginPageConnector(),
-      ),
-      routes: const [],
-    ),
-  ],
+    ],
+  ),
 );
 
 // Register the RouteObserver as a navigation observer.

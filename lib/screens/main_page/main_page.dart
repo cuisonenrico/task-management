@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:task_management/screens/widgets/custom_expansion_tile.dart';
 
-class MainPage extends StatefulWidget {
+class MainPage extends ConsumerStatefulWidget {
   const MainPage({
     super.key,
   });
 
+  static const String routeName = 'my-page';
+  static const String route = '/my-page';
+
   @override
-  State<MainPage> createState() => _MainPageState();
+  ConsumerState<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+class _MainPageState extends ConsumerState<MainPage> with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
