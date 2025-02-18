@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:task_management/firebase_options.dart';
 import 'package:task_management/state/user_state/user_model/user_model.dart';
 import 'package:task_management/task_management_app.dart';
+import 'package:task_management/utilities/handlers/user_handler.dart';
 
 Future<void> startApp() async {
   await runZonedGuarded(
@@ -22,7 +23,7 @@ Future<void> startApp() async {
 
       final currUser = FirebaseAuth.instance.currentUser;
 
-      // if (currUser != null) await store.dispatch(UserLoginAction(currUser));
+      // if (currUser != null) await UsersHandler().userLogin(currUser);
 
       FirebaseAuth.instance.authStateChanges().listen((User? user) async {
         if (user != null && user.uid != currUser?.uid) {
