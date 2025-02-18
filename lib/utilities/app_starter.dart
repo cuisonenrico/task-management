@@ -6,18 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:task_management/firebase_options.dart';
+import 'package:task_management/state/task_state/task_model/task_model.dart';
 import 'package:task_management/state/user_state/user_model/user_model.dart';
 import 'package:task_management/task_management_app.dart';
-import 'package:task_management/utilities/handlers/user_handler.dart';
 
 Future<void> startApp() async {
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
-      await Hive.initFlutter();
       // Register the User adapter
       Hive.registerAdapter(UserModelImplAdapter());
+      Hive.registerAdapter(TaskModelImplAdapter());
+
+      await Hive.initFlutter();
 
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
