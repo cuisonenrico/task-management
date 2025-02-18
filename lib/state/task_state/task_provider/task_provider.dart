@@ -8,26 +8,36 @@ import 'package:task_management/state/task_state/task_state.dart';
 part 'task_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class Task extends _$Task {
+class Task extends _$Task implements ITaskRepository {
   Task() : super();
 
   @override
   TaskState? build() => TaskState.init();
 
+  @override
   Future<void> saveTask(TaskModel task) async {
     final box = await Hive.openBox<TaskModel>('Tasks');
 
     TaskRepository(box).saveTask(task);
+    final tasks = state?.tasks;
+    if (tasks == null || tasks.isEmpty) return;
+    state = state?.copyWith(tasks: [
+      ...tasks,
+      ...[task]
+    ]);
+
     return;
   }
 
-  Future<void> getTask(String id) async {
+  @override
+  Future<List<TaskModel>?> getTasks() async {
     final box = await Hive.openBox<TaskModel>('Tasks');
 
-    final task = TaskRepository(box).getTasks();
+    final tasks = await TaskRepository(box).getTasks();
     if (kDebugMode) {
-      print(task);
+      print(tasks);
     }
-    return;
+    state = state?.copyWith(tasks: tasks);
+    return tasks;
   }
 }

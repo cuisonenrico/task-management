@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:task_management/screens/main_page/main_page.dart';
-import 'package:task_management/state/user_state/user_provider/user_provider.dart';
+import 'package:task_management/state/task_state/task_provider/task_provider.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'rootNavigatorKey');
 
@@ -22,7 +22,7 @@ final routerProvider = Provider<GoRouter>(
           child: const MainPage(),
         ),
         redirect: (_, __) {
-          ref.read(userProvider.notifier).getUser('YHSczIKk2tQj4pzCNgm1rvvDGu52');
+          ref.read(taskProvider.notifier).getTasks();
 
           return null;
         },
