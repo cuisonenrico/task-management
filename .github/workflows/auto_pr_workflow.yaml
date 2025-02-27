@@ -36,8 +36,8 @@ jobs:
             --title "${{ env.TITLE }}" \
             --body "${{ env.BODY }}" \
 #            --label "auto-generated, needs-review" \
-            --reviewer "your-github-username" \
-            --assignee "your-github-username"
+#            --reviewer "your-github-username" \
+#            --assignee "your-github-username"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
