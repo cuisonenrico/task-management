@@ -1,0 +1,28 @@
+name: Auto Create Pull Request
+
+on:
+  push:
+    branches:
+      - feature/*  # Runs when a branch prefixed with "feature/" is pushed
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Commit Message
+        id: commit_msg
+        run: |
+          echo "TITLE=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
+          echo "BODY=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
+          base: main
+          title: "${{ env.TITLE }}"
+          body: "${{ env.BODY }}"
