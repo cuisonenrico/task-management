@@ -6,9 +6,14 @@ on:
       - feature/*  # Runs when a branch prefixed with "feature/" is pushed
 
 jobs:
-  create-pr:
+  createPullRequest:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Make changes to pull request
+        run: date +%s > report.txt
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -19,10 +24,15 @@ jobs:
           echo "BODY=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           branch: ${{ github.ref_name }}
           base: main
           title: "${{ env.TITLE }}"
           body: "${{ env.BODY }}"
+          labels: |
+            automated pr
