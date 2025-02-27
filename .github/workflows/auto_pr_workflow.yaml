@@ -30,8 +30,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: ${{ github.ref_name }}
-          base: main
+          branch: main
+          base: ${{ github.ref_name }}
 #          base: main
           title: "${{ env.TITLE }}"
           body: "${{ env.BODY }}"
