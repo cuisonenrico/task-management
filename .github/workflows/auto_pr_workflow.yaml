@@ -7,19 +7,21 @@ on:
 
 jobs:
   createPullRequest:
+    permissions: write-all
     runs-on: ubuntu-latest
     name: Automatic Pull Request
-    permissions: write-all
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensures full commit history
 
-#      - name: Get Commit Message
-#        id: commit_msg
-#        run: |
-#          echo "TITLE=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
-#          echo "BODY=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
+      - name: Get Commit Message
+        id: commit_msg
+        run: |
+          echo "TITLE=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
+          echo "BODY=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
 
       - name: Create Pull Request
         id: cpr
@@ -28,11 +30,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          signoff: false
           branch: ${{ github.ref_name }}
-          base: main
-          title: TEST
-          body: TEST BODY
+#          base: main
+          title: "${{ env.TITLE }}"
+          body: "${{ env.BODY }}"
           labels: |
             automated pr
           draft: false
