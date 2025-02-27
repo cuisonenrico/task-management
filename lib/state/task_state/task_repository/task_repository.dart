@@ -2,11 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 import 'package:task_management/state/task_state/task_model/task_model.dart';
-
-abstract class ITaskRepository {
-  Future<void> saveTask(TaskModel task);
-  Future<List<TaskModel>?> getTasks();
-}
+import 'package:task_management/state/task_state/task_repository/i_task_repository.dart';
 
 @LazySingleton(as: ITaskRepository)
 class TaskRepository implements ITaskRepository {

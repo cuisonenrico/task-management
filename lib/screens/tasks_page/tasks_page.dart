@@ -2,6 +2,8 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:task_management/screens/tasks_page/dot_marker.dart';
+import 'package:task_management/screens/tasks_page/task_tile.dart';
 import 'package:task_management/state/task_state/task_model/task_model.dart';
 import 'package:task_management/state/task_state/task_provider/task_provider.dart';
 
@@ -12,14 +14,20 @@ class TasksPage extends ConsumerStatefulWidget {
   ConsumerState<TasksPage> createState() => _TasksPageState();
 }
 
-class _TasksPageState extends ConsumerState<TasksPage> {
+class _TasksPageState extends ConsumerState<TasksPage> with AutomaticKeepAliveClientMixin {
   CalendarFormat _calendarFormat = CalendarFormat.week; // Start in week mode
   double _dragStartY = 0.0;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @mustCallSuper
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final provider = ref.watch(taskProvider);
     final tasks = provider?.tasks;
     // final notifier = ref.watch(taskProvider.notifier);
@@ -28,9 +36,9 @@ class _TasksPageState extends ConsumerState<TasksPage> {
     List<TaskModel> getTasksForDay(DateTime day) {
       final eventExists = tasks?.mapNotNull((task) {
         final taskDate = DateTime.utc(
-          task.date!.year,
-          task.date!.day,
-          task.date!.month,
+          task.createdAt!.year,
+          task.createdAt!.day,
+          task.createdAt!.month,
         );
         final dayParsed = DateTime.utc(
           day.year,
@@ -43,6 +51,7 @@ class _TasksPageState extends ConsumerState<TasksPage> {
     }
 
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       child: GestureDetector(
         onVerticalDragStart: (details) {
           _dragStartY = details.globalPosition.dy;
@@ -75,122 +84,41 @@ class _TasksPageState extends ConsumerState<TasksPage> {
                   ),
                 ),
                 // ignore: inference_failure_on_instance_creation
-                child: TableCalendar(
-                  firstDay: DateTime.utc(2022, 10, 16),
-                  lastDay: DateTime.utc(2030, 3, 14),
-                  focusedDay: _focusedDay,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  headerVisible: false,
-                  calendarFormat: _calendarFormat,
-                  availableCalendarFormats: {
-                    CalendarFormat.month: 'Month',
-                    CalendarFormat.week: 'Week',
-                  },
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                  },
-                  eventLoader: (day) => getTasksForDay(day),
-                  calendarBuilders: CalendarBuilders(
-                    markerBuilder: (context, date, events) {
-                      if (events.isNotEmpty) {
-                        return Positioned(
-                          bottom: 5,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: events
-                                .take(3) // Show up to 3 dots
-                                .map((event) => Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 2),
-                                      width: 6,
-                                      height: 6,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.red, // Event dot color
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
-                        );
-                      }
-                      return SizedBox.shrink();
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: TableCalendar(
+                    firstDay: DateTime.utc(2022, 10, 16),
+                    lastDay: DateTime.utc(2030, 3, 14),
+                    focusedDay: _focusedDay,
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                    headerVisible: false,
+                    calendarFormat: _calendarFormat,
+                    availableCalendarFormats: {
+                      CalendarFormat.month: 'Month',
+                      CalendarFormat.week: 'Week',
                     },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                    },
+                    eventLoader: (day) => getTasksForDay(day),
+                    calendarBuilders: CalendarBuilders<TaskModel>(
+                      markerBuilder: (context, date, events) {
+                        if (events.isNotEmpty) {
+                          return DotMarker(events);
+                        }
+                        return SizedBox.shrink();
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 16.0),
             // getTasksForDay(_selectedDay ?? _focusedDay).isNotEmpty
-            ...getTasksForDay(_selectedDay ?? _focusedDay).map(
-              (task) => AnimatedSwitcher(
-                duration: Duration(milliseconds: 300),
-                transitionBuilder: (child, animation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Icon(
-                          Icons.circle_notifications_outlined,
-                          size: 45,
-                        ),
-                      ),
-                      Spacer(),
-                      Flexible(
-                        flex: 10,
-                        child: Column(
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: Colors.indigoAccent,
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    task.date.toString(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    task.title ?? '',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    task.description ?? '',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            ...getTasksForDay(_selectedDay ?? _focusedDay).map((task) => TaskTile(task)),
           ],
         ),
       ),

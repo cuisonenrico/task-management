@@ -19,18 +19,18 @@ class MainPage extends ConsumerStatefulWidget {
 
 class _MainPageState extends ConsumerState<MainPage> with TickerProviderStateMixin {
   late TabController _tabController;
-  late int _currentIndex;
+  // late int _currentIndex;
   double _scaleFactor = 1.0;
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = 0;
+    // _currentIndex = 0;
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {
-          _currentIndex = _tabController.index;
+          // _currentIndex = _tabController.index;
         });
       }
     });
@@ -101,14 +101,14 @@ class _MainPageState extends ConsumerState<MainPage> with TickerProviderStateMix
                 ),
                 Column(
                   children: <Widget>[
-                    if (_currentIndex == 0)
-                      AnimatedContainer(
-                        duration: Duration(milliseconds: 500),
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('Tasks'),
-                        ),
-                      ),
+                    // if (_currentIndex == 0)
+                    //   AnimatedContainer(
+                    //     duration: Duration(milliseconds: 500),
+                    //     child: Padding(
+                    //       padding: EdgeInsets.all(8.0),
+                    //       child: Text('Tasks'),
+                    //     ),
+                    //   ),
                     // if (_currentIndex == 1)
                     //   AnimatedContainer(
                     //     duration: Duration(milliseconds: 500),
