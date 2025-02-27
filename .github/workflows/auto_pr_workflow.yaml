@@ -35,7 +35,7 @@ jobs:
             --head ${{ github.ref_name }} \
             --title "${{ env.TITLE }}" \
             --body "${{ env.BODY }}" \
-            --label "automated pull request" \
+            --labels "automated pull request" \
 #            --reviewer "your-github-username" \
 #            --assignee "your-github-username"
         env:
