@@ -23,17 +23,35 @@ jobs:
           echo "TITLE=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
           echo "BODY=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
 
+      - name: Authenticate with GitHub CLI
+        run: gh auth status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          branch: ${{ github.ref_name }}
-          title: "${{ env.TITLE }}"
-          body: "${{ env.BODY }}"
-          labels: |
-            automated pr
-          draft: false
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ github.ref_name }} \
+            --title "${{ env.TITLE }}" \
+            --body "${{ env.BODY }}" \
+            --label "auto-generated, needs-review" \
+            --reviewer "your-github-username" \
+            --assignee "your-github-username"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Create Pull Request
+#        id: cpr
+#        uses: peter-evans/create-pull-request@v6
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+#          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+#          branch: ${{ github.ref_name }}
+#          title: "${{ env.TITLE }}"
+#          body: "${{ env.BODY }}"
+#          labels: |
+#            automated pr
+#          draft: false
 
