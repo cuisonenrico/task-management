@@ -7,7 +7,9 @@ name: Lint Checks
 
 on:
   pull_request:
-    branches: ['**']
+    types: [ opened, synchronize ]
+    branches:
+      - main
 
 jobs:
   tests:
