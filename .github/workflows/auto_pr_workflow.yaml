@@ -1,4 +1,4 @@
-name: Auto Create Pull Request
+name: Auto Create Pull Request and Lint Check
 
 on:
   push:
@@ -9,8 +9,7 @@ jobs:
   createPullRequest:
     permissions: write-all
     runs-on: ubuntu-latest
-    name: Automatic Pull Request
-
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
