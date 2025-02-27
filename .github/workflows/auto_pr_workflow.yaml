@@ -35,7 +35,7 @@ jobs:
             --head ${{ github.ref_name }} \
             --title "${{ env.TITLE }}" \
             --body "${{ env.BODY }}" \
-            --label "auto-generated, needs-review" \
+#            --label "auto-generated, needs-review" \
             --reviewer "your-github-username" \
             --assignee "your-github-username"
         env:
