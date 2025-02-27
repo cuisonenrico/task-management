@@ -26,6 +26,8 @@ class _TasksPageState extends ConsumerState<TasksPage> with AutomaticKeepAliveCl
   @mustCallSuper
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     final provider = ref.watch(taskProvider);
     final tasks = provider?.tasks;
     // final notifier = ref.watch(taskProvider.notifier);
