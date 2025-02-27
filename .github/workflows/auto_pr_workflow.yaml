@@ -41,3 +41,73 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get FVM Config
+        id: fvm_config
+        uses: zoexx/github-action-json-file-properties@release
+        with:
+          file_path: ".fvm/fvm_config.json"
+
+      - name: Install flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm_config.outputs.flutterSdkVersion }}
+          channel: stable
+          cache: true
+          architecture: x64
+
+      - name: Inject Dummy Environment File
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: lib/environment.dart
+          write-mode: overwrite
+          contents: |
+            // ignore_for_file: constant_identifier_names
+            // ignore_for_file: non_constant_identifier_names
+            import 'package:firebase_core/firebase_core.dart';
+            class Environment {
+               FirebaseOptions WEB_ENV = const FirebaseOptions(
+                  apiKey: '',
+                  appId: '',
+                  messagingSenderId: '',
+                  projectId: '',
+                  authDomain: '',
+                  storageBucket: '',
+                  measurementId: '',
+                );
+
+                FirebaseOptions ADR_ENV = const FirebaseOptions(
+                  apiKey: '',
+                  appId: '',
+                  messagingSenderId: '',
+                  projectId: '',
+                  authDomain: '',
+                  storageBucket: '',
+                  measurementId: '',
+                );
+
+                FirebaseOptions IOS_ENV = const FirebaseOptions(
+                  apiKey: '',
+                  appId: '',
+                  messagingSenderId: '',
+                  projectId: '',
+                  authDomain: '',
+                  storageBucket: '',
+                  measurementId: '',
+                );
+            }
+
+      - name: Install packages and analyze
+        run: |
+          flutter pub get
+          flutter packages pub run build_runner build --delete-conflicting-outputs --verbose
+          flutter analyze > flutter_analyze_report.txt
+
+      - name: Comment PR
+        if: ${{ failure() }} || ${{ success() }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "lints"
+          hide_and_recreate: true
+          hide_classify: "OUTDATED"
+          path: flutter_analyze_report.txt
+
