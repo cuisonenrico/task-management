@@ -7,12 +7,6 @@ class DotMarker extends StatelessWidget {
 
   final List<TaskModel> events;
 
-  /// TEST MO THIS SHIT
-  /// TEST MO THIS SHIT
-  /// TEST MO THIS SHIT
-  /// TEST MO THIS SHIT
-  /// TEST MO THIS SHIT
-  /// TEST MO THIS SHIT
   @override
   Widget build(BuildContext context) {
     return Row(
