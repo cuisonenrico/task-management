@@ -38,6 +38,7 @@ jobs:
           echo "BODY=$(git log -1 --pretty=%b)" >> $GITHUB_ENV
 
       - name: Authenticate with GitHub CLI
+        if: env.SKIP_PR != 'true'  # Only run if no PR exists
         run: gh auth status
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
