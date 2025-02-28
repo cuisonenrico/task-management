@@ -9,6 +9,7 @@ jobs:
   createPullRequest:
     permissions: write-all
     runs-on: ubuntu-latest
+    name: Auto PR / Lint Check
     
     steps:
       - name: Checkout Repository
